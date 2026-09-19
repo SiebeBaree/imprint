@@ -1,0 +1,12 @@
+node_modules
+dist
+build
+.turbo
+.react-router
+.env
+.env.*
+.DS_Store
+test-results
+playwright-report
+*.tsbuildinfo
+.vercel

@@ -1,0 +1,16 @@
+{
+    "plugins": ["typescript", "unicorn", "oxc", "import", "promise", "vitest"],
+    "categories": {
+        "correctness": "error",
+        "suspicious": "warn",
+        "perf": "warn"
+    },
+    "rules": {
+        "import/no-unassigned-import": "off",
+        "import/no-named-as-default": "off",
+        "typescript/no-explicit-any": "error",
+        "typescript/consistent-type-imports": "error",
+        "no-console": "error",
+        "import/no-cycle": "error"
+    }
+}

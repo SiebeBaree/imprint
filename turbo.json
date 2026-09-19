@@ -1,0 +1,17 @@
+{
+    "$schema": "https://turborepo.com/schema.json",
+    "tasks": {
+        "build": {
+            "dependsOn": ["^build"],
+            "outputs": ["dist/**", "build/**"],
+            "env": ["NODE_ENV", "VITE_*", "SKIP_ENV_VALIDATION"]
+        },
+        "typecheck": {},
+        "lint": {},
+        "test": {},
+        "dev": {
+            "cache": false,
+            "persistent": true
+        }
+    }
+}

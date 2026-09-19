@@ -1,0 +1,12 @@
+{
+    "extends": ["./base.json"],
+    "plugins": ["typescript", "unicorn", "oxc", "import", "promise", "vitest", "react", "jsx-a11y"],
+    "env": {
+        "browser": true
+    },
+    "rules": {
+        "react/react-in-jsx-scope": "off",
+        "react/rules-of-hooks": "error",
+        "react/exhaustive-deps": "error"
+    }
+}
