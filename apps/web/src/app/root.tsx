@@ -6,13 +6,11 @@ import { useEffect, useState } from "react";
 import { Links, Meta, Outlet, Scripts, ScrollRestoration, useRouteError } from "react-router";
 
 import { Toaster } from "@/components/ui/sonner";
+import { AuthProvider } from "@/features/auth/auth-context";
 import { createQueryClient } from "@/lib/query-client";
 
 export function meta() {
-    return [
-        { title: "Todos" },
-        { name: "description", content: "A React and Fastify starter with the full production toolchain wired up." },
-    ];
+    return [{ title: "Imprint" }, { name: "description", content: "Marketing campaigns for your physical products." }];
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {
@@ -39,7 +37,9 @@ export default function App() {
 
     return (
         <QueryClientProvider client={queryClient}>
-            <Outlet />
+            <AuthProvider>
+                <Outlet />
+            </AuthProvider>
             <Toaster />
         </QueryClientProvider>
     );

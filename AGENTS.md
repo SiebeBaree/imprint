@@ -1,6 +1,8 @@
 # Imprint
 
-<TODO: write a one or two paragraph description of the app here, including what it does and what problem it solves.>
+Imprint creates Instagram campaigns for physical product brands. Users add a public Instagram profile, brand guidelines and product reference images, review an evidence-backed brand profile and generate six feed and story visuals with captions and suggested posting times. Individual images support prompt-based edits, version history and downloads.
+
+The PoC has one brand per user and Google sign-in through Clerk. Private media lives in R2. Trigger.dev runs Instagram imports, brand analysis and campaign generation. Astra plans and reviews campaigns through OpenRouter Flex, with Nano Banana Pro for human scenes and Sunburst for product rendering and edits.
 
 ## This codebase
 
@@ -29,7 +31,7 @@ Contracts first, then api, then web. Add or change the Zod schema in `@repo/cont
 
 ## Testing: when and what
 
-The api's real surface is HTTP, so modules are tested by injecting requests into a fully built app backed by PGlite (an in-memory Postgres running the real migrations). That covers routing, validation, serialization and SQL in one honest test; write one per meaningful behavior of an endpoint, including the interesting rejections. A service function earns its own unit test only when it contains logic worth isolating, a passthrough does not. On the web, test contract schemas at their edges, real logic in lib and dumb components with behavior worth pinning; hooks wired to TanStack Query are covered by the e2e journey, not by mocking the query client. The root Playwright suite is for critical cross-app flows, a handful at most, running against production builds. Do not write smoke tests that assert a page renders, regression tests for deleted features or tests that mock half the app; if a test needs heavy mocking, the seam is wrong.
+The api's real surface is HTTP, so modules are tested by injecting requests into a fully built app backed by PGlite (an in-memory Postgres running the real migrations). That covers routing, validation, serialization and SQL in one honest test; write one per meaningful behavior of an endpoint, including the interesting rejections. A service function earns its own unit test only when it contains logic worth isolating, a passthrough does not. On the web, test contract schemas at their edges, real logic in lib and dumb components with behavior worth pinning; hooks wired to TanStack Query are covered by the e2e journey, not by mocking the query client. The root Playwright suite runs against the real running app. Set E2E_STORAGE_STATE to a Clerk-authenticated Playwright state file and E2E_CAMPAIGN_ID to a completed test campaign. It makes real provider calls and stays out of automatic CI. Do not write smoke tests that assert a page renders, regression tests for deleted features or tests that mock half the app; if a test needs heavy mocking, the seam is wrong.
 
 ## Things you need to know
 
@@ -41,5 +43,5 @@ The api's real surface is HTTP, so modules are tested by injecting requests into
 - Production api logs are plain JSON on stdout for the Vercel Axiom drain; pretty printing exists only under `NODE_ENV=development`. Never add a log shipper to the code.
 - Builds without an environment use `SKIP_ENV_VALIDATION=1` (api) and `VITE_SKIP_ENV_VALIDATION=1` (web). Never weaken a required env var to optional to make a build pass; the fail-fast is the point.
 - Formatting is oxfmt's job from the repo root, including import order and Tailwind class order. Lint rules live in `@repo/oxlint-config` so all packages stay on one rule set.
-- There is no auth by design (the provider choice varies per project). The api's plugin chain is where a decorator would go; protect routes per module.
-- The e2e todos flow needs `DATABASE_URL`, skips itself without it and deletes its own `e2e %` rows. The web smoke spec runs regardless.
+- Clerk tokens are verified in the injected auth plugin. Every product module protects its routes and scopes records to the authenticated owner. The web uses a custom Google-only sign-in flow.
+- `pnpm db:migrate` loads the database URL from `apps/api/.env`. Run it after adding the environment variables. `pnpm dev` starts the web, API and Trigger.dev worker together. `pnpm jobs:dev` runs only the worker if needed. Tests use PGlite through dependency injection, never through an alternate application runtime.

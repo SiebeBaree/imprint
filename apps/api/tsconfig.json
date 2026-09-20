@@ -8,5 +8,5 @@
         "module": "esnext",
         "moduleResolution": "bundler"
     },
-    "include": ["src", "vitest.config.ts"]
+    "include": ["src", "vitest.config.ts", "trigger.config.ts"]
 }

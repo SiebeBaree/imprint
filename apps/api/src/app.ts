@@ -11,10 +11,16 @@ import {
     type ZodTypeProvider,
 } from "fastify-type-provider-zod";
 
-import { NotFoundError } from "./lib/errors";
+import type { Dependencies } from "./lib/dependencies";
+import { HttpError } from "./lib/errors";
+import { assetsRoutes } from "./modules/assets/assets.routes";
+import { brandsRoutes } from "./modules/brands/brands.routes";
+import { campaignsRoutes } from "./modules/campaigns/campaigns.routes";
 import { healthModule } from "./modules/health";
-import { todosRoutes } from "./modules/todos";
+import { jobsRoutes } from "./modules/jobs/jobs.routes";
+import { productsRoutes } from "./modules/products/products.routes";
 import { tunnelModule } from "./modules/tunnel";
+import { authPlugin } from "./plugins/auth";
 import { observabilityPlugin } from "./plugins/observability";
 import { rateLimitPlugin } from "./plugins/rate-limit";
 import { genReqId, requestIdPlugin } from "./plugins/request-id";
@@ -28,12 +34,13 @@ declare module "fastify" {
 
 export type AppOptions = {
     db: Database;
+    services: Dependencies;
     logger?: Logger;
     corsOrigin: string;
     upstash?: { url: string; token: string };
 };
 
-export async function buildApp({ db, logger, corsOrigin, upstash }: AppOptions) {
+export async function buildApp({ db, services, logger, corsOrigin, upstash }: AppOptions) {
     const app = fastify({
         ...(logger ? { loggerInstance: logger } : { logger: false }),
         // The observability plugin logs one canonical line per request instead.
@@ -68,8 +75,8 @@ export async function buildApp({ db, logger, corsOrigin, upstash }: AppOptions) 
             });
         }
 
-        if (error instanceof NotFoundError) {
-            return reply.status(404).send({ message: error.message, requestId });
+        if (error instanceof HttpError) {
+            return reply.status(error.status).send({ message: error.message, requestId });
         }
 
         Sentry.captureException(error, { tags: { requestId } });
@@ -78,7 +85,12 @@ export async function buildApp({ db, logger, corsOrigin, upstash }: AppOptions) 
     });
 
     await app.register(healthModule);
-    await app.register(todosRoutes);
+    await app.register(authPlugin, { services });
+    await app.register(brandsRoutes);
+    await app.register(assetsRoutes);
+    await app.register(productsRoutes);
+    await app.register(campaignsRoutes);
+    await app.register(jobsRoutes);
     await app.register(tunnelModule);
 
     return app;

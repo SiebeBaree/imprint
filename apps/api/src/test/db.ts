@@ -1,5 +1,5 @@
 import { PGlite } from "@electric-sql/pglite";
-import { schema, todos, type Database } from "@repo/db";
+import { schema, brands, type Database } from "@repo/db";
 import { drizzle } from "drizzle-orm/pglite";
 import { migrate } from "drizzle-orm/pglite/migrator";
 
@@ -12,7 +12,7 @@ export async function createTestDb() {
     return {
         db: db as unknown as Database,
         reset: async () => {
-            await db.delete(todos);
+            await db.delete(brands);
         },
         close: () => client.close(),
     };

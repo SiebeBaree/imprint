@@ -2,7 +2,7 @@
     "name": "imprint",
     "private": true,
     "scripts": {
-        "dev": "turbo dev",
+        "dev": "turbo dev jobs:dev",
         "build": "turbo build",
         "typecheck": "turbo typecheck && tsc -p e2e",
         "lint": "turbo lint && oxlint --deny-warnings e2e",
@@ -12,7 +12,9 @@
         "e2e": "playwright test --config e2e/playwright.config.ts",
         "db:generate": "pnpm --filter @repo/db db:generate",
         "db:migrate": "pnpm --filter @repo/db db:migrate",
-        "db:studio": "pnpm --filter @repo/db db:studio"
+        "db:studio": "pnpm --filter @repo/db db:studio",
+        "jobs:dev": "pnpm --filter api jobs:dev",
+        "jobs:deploy": "pnpm --filter api jobs:deploy"
     },
     "devDependencies": {
         "@neondatabase/serverless": "^1.1.0",

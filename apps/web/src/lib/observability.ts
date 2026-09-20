@@ -35,5 +35,9 @@ if (env.VITE_POSTHOG_KEY && typeof window !== "undefined") {
         ui_host: "https://eu.posthog.com",
         defaults: "2026-05-30",
         capture_exceptions: false,
+        autocapture: false,
+        disable_session_recording: true,
+        capture_pageview: true,
+        property_denylist: ["$current_url", "$pathname", "$referrer"],
     });
 }

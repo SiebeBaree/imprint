@@ -8,6 +8,27 @@
             "when": 1787327134968,
             "tag": "0000_calm_cammi",
             "breakpoints": true
+        },
+        {
+            "idx": 1,
+            "version": "7",
+            "when": 1789832958779,
+            "tag": "0001_awesome_nova",
+            "breakpoints": true
+        },
+        {
+            "idx": 2,
+            "version": "7",
+            "when": 1789834439799,
+            "tag": "0002_slippery_echo",
+            "breakpoints": true
+        },
+        {
+            "idx": 3,
+            "version": "7",
+            "when": 1789834980462,
+            "tag": "0003_modern_abomination",
+            "breakpoints": true
         }
     ]
 }

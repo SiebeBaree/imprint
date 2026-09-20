@@ -1,0 +1,983 @@
+{
+    "id": "c6a73615-6feb-498f-9fca-25f9627b6a5e",
+    "prevId": "df5f8617-6c4f-4e49-9a1a-c660d0cd05c6",
+    "version": "7",
+    "dialect": "postgresql",
+    "tables": {
+        "public.assets": {
+            "name": "assets",
+            "schema": "",
+            "columns": {
+                "id": {
+                    "name": "id",
+                    "type": "uuid",
+                    "primaryKey": true,
+                    "notNull": true,
+                    "default": "gen_random_uuid()"
+                },
+                "brand_id": {
+                    "name": "brand_id",
+                    "type": "uuid",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "name": {
+                    "name": "name",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "key": {
+                    "name": "key",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "mime_type": {
+                    "name": "mime_type",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "bytes": {
+                    "name": "bytes",
+                    "type": "integer",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "role": {
+                    "name": "role",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "status": {
+                    "name": "status",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": "'uploading'"
+                },
+                "width": {
+                    "name": "width",
+                    "type": "integer",
+                    "primaryKey": false,
+                    "notNull": false
+                },
+                "height": {
+                    "name": "height",
+                    "type": "integer",
+                    "primaryKey": false,
+                    "notNull": false
+                },
+                "product_id": {
+                    "name": "product_id",
+                    "type": "uuid",
+                    "primaryKey": false,
+                    "notNull": false
+                },
+                "is_primary": {
+                    "name": "is_primary",
+                    "type": "boolean",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": false
+                },
+                "caption": {
+                    "name": "caption",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": false
+                },
+                "source_url": {
+                    "name": "source_url",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": false
+                },
+                "source_id": {
+                    "name": "source_id",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": false
+                },
+                "extracted_text": {
+                    "name": "extracted_text",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": false
+                },
+                "error": {
+                    "name": "error",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": false
+                },
+                "created_at": {
+                    "name": "created_at",
+                    "type": "timestamp with time zone",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": "now()"
+                }
+            },
+            "indexes": {},
+            "foreignKeys": {
+                "assets_brand_id_brands_id_fk": {
+                    "name": "assets_brand_id_brands_id_fk",
+                    "tableFrom": "assets",
+                    "tableTo": "brands",
+                    "columnsFrom": ["brand_id"],
+                    "columnsTo": ["id"],
+                    "onDelete": "cascade",
+                    "onUpdate": "no action"
+                },
+                "assets_product_id_products_id_fk": {
+                    "name": "assets_product_id_products_id_fk",
+                    "tableFrom": "assets",
+                    "tableTo": "products",
+                    "columnsFrom": ["product_id"],
+                    "columnsTo": ["id"],
+                    "onDelete": "set null",
+                    "onUpdate": "no action"
+                }
+            },
+            "compositePrimaryKeys": {},
+            "uniqueConstraints": {
+                "assets_key_unique": {
+                    "name": "assets_key_unique",
+                    "nullsNotDistinct": false,
+                    "columns": ["key"]
+                }
+            },
+            "policies": {},
+            "checkConstraints": {},
+            "isRLSEnabled": false
+        },
+        "public.brand_profiles": {
+            "name": "brand_profiles",
+            "schema": "",
+            "columns": {
+                "id": {
+                    "name": "id",
+                    "type": "uuid",
+                    "primaryKey": true,
+                    "notNull": true,
+                    "default": "gen_random_uuid()"
+                },
+                "brand_id": {
+                    "name": "brand_id",
+                    "type": "uuid",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "version": {
+                    "name": "version",
+                    "type": "integer",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "profile": {
+                    "name": "profile",
+                    "type": "jsonb",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "created_at": {
+                    "name": "created_at",
+                    "type": "timestamp with time zone",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": "now()"
+                }
+            },
+            "indexes": {
+                "brand_profiles_version": {
+                    "name": "brand_profiles_version",
+                    "columns": [
+                        {
+                            "expression": "brand_id",
+                            "isExpression": false,
+                            "asc": true,
+                            "nulls": "last"
+                        },
+                        {
+                            "expression": "version",
+                            "isExpression": false,
+                            "asc": true,
+                            "nulls": "last"
+                        }
+                    ],
+                    "isUnique": true,
+                    "concurrently": false,
+                    "method": "btree",
+                    "with": {}
+                }
+            },
+            "foreignKeys": {
+                "brand_profiles_brand_id_brands_id_fk": {
+                    "name": "brand_profiles_brand_id_brands_id_fk",
+                    "tableFrom": "brand_profiles",
+                    "tableTo": "brands",
+                    "columnsFrom": ["brand_id"],
+                    "columnsTo": ["id"],
+                    "onDelete": "cascade",
+                    "onUpdate": "no action"
+                }
+            },
+            "compositePrimaryKeys": {},
+            "uniqueConstraints": {},
+            "policies": {},
+            "checkConstraints": {},
+            "isRLSEnabled": false
+        },
+        "public.brands": {
+            "name": "brands",
+            "schema": "",
+            "columns": {
+                "id": {
+                    "name": "id",
+                    "type": "uuid",
+                    "primaryKey": true,
+                    "notNull": true,
+                    "default": "gen_random_uuid()"
+                },
+                "owner_id": {
+                    "name": "owner_id",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "name": {
+                    "name": "name",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": "'Your brand'"
+                },
+                "instagram_url": {
+                    "name": "instagram_url",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": false
+                },
+                "instagram_status": {
+                    "name": "instagram_status",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": "'missing'"
+                },
+                "instagram_message": {
+                    "name": "instagram_message",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": false
+                },
+                "instagram_count": {
+                    "name": "instagram_count",
+                    "type": "integer",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": 0
+                },
+                "instagram_run_id": {
+                    "name": "instagram_run_id",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": false
+                },
+                "status": {
+                    "name": "status",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": "'collecting'"
+                },
+                "profile": {
+                    "name": "profile",
+                    "type": "jsonb",
+                    "primaryKey": false,
+                    "notNull": false
+                },
+                "profile_version": {
+                    "name": "profile_version",
+                    "type": "integer",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": 0
+                },
+                "profile_confirmed_at": {
+                    "name": "profile_confirmed_at",
+                    "type": "timestamp with time zone",
+                    "primaryKey": false,
+                    "notNull": false
+                },
+                "suggestions": {
+                    "name": "suggestions",
+                    "type": "jsonb",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": "'[]'::jsonb"
+                },
+                "image_count": {
+                    "name": "image_count",
+                    "type": "integer",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": 0
+                },
+                "error": {
+                    "name": "error",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": false
+                },
+                "created_at": {
+                    "name": "created_at",
+                    "type": "timestamp with time zone",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": "now()"
+                }
+            },
+            "indexes": {},
+            "foreignKeys": {},
+            "compositePrimaryKeys": {},
+            "uniqueConstraints": {
+                "brands_ownerId_unique": {
+                    "name": "brands_ownerId_unique",
+                    "nullsNotDistinct": false,
+                    "columns": ["owner_id"]
+                }
+            },
+            "policies": {},
+            "checkConstraints": {},
+            "isRLSEnabled": false
+        },
+        "public.campaign_items": {
+            "name": "campaign_items",
+            "schema": "",
+            "columns": {
+                "id": {
+                    "name": "id",
+                    "type": "uuid",
+                    "primaryKey": true,
+                    "notNull": true,
+                    "default": "gen_random_uuid()"
+                },
+                "campaign_id": {
+                    "name": "campaign_id",
+                    "type": "uuid",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "sequence": {
+                    "name": "sequence",
+                    "type": "integer",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "brief": {
+                    "name": "brief",
+                    "type": "jsonb",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "caption": {
+                    "name": "caption",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "publish_date": {
+                    "name": "publish_date",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "publish_time": {
+                    "name": "publish_time",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "status": {
+                    "name": "status",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": "'queued'"
+                },
+                "current_version_id": {
+                    "name": "current_version_id",
+                    "type": "uuid",
+                    "primaryKey": false,
+                    "notNull": false
+                },
+                "revision": {
+                    "name": "revision",
+                    "type": "integer",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": 0
+                }
+            },
+            "indexes": {
+                "campaign_item_sequence": {
+                    "name": "campaign_item_sequence",
+                    "columns": [
+                        {
+                            "expression": "campaign_id",
+                            "isExpression": false,
+                            "asc": true,
+                            "nulls": "last"
+                        },
+                        {
+                            "expression": "sequence",
+                            "isExpression": false,
+                            "asc": true,
+                            "nulls": "last"
+                        }
+                    ],
+                    "isUnique": true,
+                    "concurrently": false,
+                    "method": "btree",
+                    "with": {}
+                }
+            },
+            "foreignKeys": {
+                "campaign_items_campaign_id_campaigns_id_fk": {
+                    "name": "campaign_items_campaign_id_campaigns_id_fk",
+                    "tableFrom": "campaign_items",
+                    "tableTo": "campaigns",
+                    "columnsFrom": ["campaign_id"],
+                    "columnsTo": ["id"],
+                    "onDelete": "cascade",
+                    "onUpdate": "no action"
+                }
+            },
+            "compositePrimaryKeys": {},
+            "uniqueConstraints": {},
+            "policies": {},
+            "checkConstraints": {},
+            "isRLSEnabled": false
+        },
+        "public.campaigns": {
+            "name": "campaigns",
+            "schema": "",
+            "columns": {
+                "id": {
+                    "name": "id",
+                    "type": "uuid",
+                    "primaryKey": true,
+                    "notNull": true,
+                    "default": "gen_random_uuid()"
+                },
+                "brand_id": {
+                    "name": "brand_id",
+                    "type": "uuid",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "request_key": {
+                    "name": "request_key",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "title": {
+                    "name": "title",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": "'New campaign'"
+                },
+                "brief": {
+                    "name": "brief",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "product_id": {
+                    "name": "product_id",
+                    "type": "uuid",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "supporting_product_ids": {
+                    "name": "supporting_product_ids",
+                    "type": "jsonb",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": "'[]'::jsonb"
+                },
+                "profile_version": {
+                    "name": "profile_version",
+                    "type": "integer",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "profile_snapshot": {
+                    "name": "profile_snapshot",
+                    "type": "jsonb",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "start_date": {
+                    "name": "start_date",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "duration_days": {
+                    "name": "duration_days",
+                    "type": "integer",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": 14
+                },
+                "status": {
+                    "name": "status",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": "'queued'"
+                },
+                "stage": {
+                    "name": "stage",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": "'Waiting to start'"
+                },
+                "plan": {
+                    "name": "plan",
+                    "type": "jsonb",
+                    "primaryKey": false,
+                    "notNull": false
+                },
+                "error": {
+                    "name": "error",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": false
+                },
+                "created_at": {
+                    "name": "created_at",
+                    "type": "timestamp with time zone",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": "now()"
+                }
+            },
+            "indexes": {
+                "campaigns_request": {
+                    "name": "campaigns_request",
+                    "columns": [
+                        {
+                            "expression": "brand_id",
+                            "isExpression": false,
+                            "asc": true,
+                            "nulls": "last"
+                        },
+                        {
+                            "expression": "request_key",
+                            "isExpression": false,
+                            "asc": true,
+                            "nulls": "last"
+                        }
+                    ],
+                    "isUnique": true,
+                    "concurrently": false,
+                    "method": "btree",
+                    "with": {}
+                }
+            },
+            "foreignKeys": {
+                "campaigns_brand_id_brands_id_fk": {
+                    "name": "campaigns_brand_id_brands_id_fk",
+                    "tableFrom": "campaigns",
+                    "tableTo": "brands",
+                    "columnsFrom": ["brand_id"],
+                    "columnsTo": ["id"],
+                    "onDelete": "cascade",
+                    "onUpdate": "no action"
+                },
+                "campaigns_product_id_products_id_fk": {
+                    "name": "campaigns_product_id_products_id_fk",
+                    "tableFrom": "campaigns",
+                    "tableTo": "products",
+                    "columnsFrom": ["product_id"],
+                    "columnsTo": ["id"],
+                    "onDelete": "no action",
+                    "onUpdate": "no action"
+                }
+            },
+            "compositePrimaryKeys": {},
+            "uniqueConstraints": {},
+            "policies": {},
+            "checkConstraints": {},
+            "isRLSEnabled": false
+        },
+        "public.generation_attempts": {
+            "name": "generation_attempts",
+            "schema": "",
+            "columns": {
+                "id": {
+                    "name": "id",
+                    "type": "uuid",
+                    "primaryKey": true,
+                    "notNull": true,
+                    "default": "gen_random_uuid()"
+                },
+                "job_id": {
+                    "name": "job_id",
+                    "type": "uuid",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "operation": {
+                    "name": "operation",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "model": {
+                    "name": "model",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "provider_request_id": {
+                    "name": "provider_request_id",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": false
+                },
+                "usage": {
+                    "name": "usage",
+                    "type": "jsonb",
+                    "primaryKey": false,
+                    "notNull": false
+                },
+                "duration_ms": {
+                    "name": "duration_ms",
+                    "type": "integer",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "created_at": {
+                    "name": "created_at",
+                    "type": "timestamp with time zone",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": "now()"
+                }
+            },
+            "indexes": {},
+            "foreignKeys": {
+                "generation_attempts_job_id_jobs_id_fk": {
+                    "name": "generation_attempts_job_id_jobs_id_fk",
+                    "tableFrom": "generation_attempts",
+                    "tableTo": "jobs",
+                    "columnsFrom": ["job_id"],
+                    "columnsTo": ["id"],
+                    "onDelete": "cascade",
+                    "onUpdate": "no action"
+                }
+            },
+            "compositePrimaryKeys": {},
+            "uniqueConstraints": {},
+            "policies": {},
+            "checkConstraints": {},
+            "isRLSEnabled": false
+        },
+        "public.image_versions": {
+            "name": "image_versions",
+            "schema": "",
+            "columns": {
+                "id": {
+                    "name": "id",
+                    "type": "uuid",
+                    "primaryKey": true,
+                    "notNull": true,
+                    "default": "gen_random_uuid()"
+                },
+                "item_id": {
+                    "name": "item_id",
+                    "type": "uuid",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "parent_id": {
+                    "name": "parent_id",
+                    "type": "uuid",
+                    "primaryKey": false,
+                    "notNull": false
+                },
+                "number": {
+                    "name": "number",
+                    "type": "integer",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "asset_id": {
+                    "name": "asset_id",
+                    "type": "uuid",
+                    "primaryKey": false,
+                    "notNull": false
+                },
+                "prompt": {
+                    "name": "prompt",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": false
+                },
+                "status": {
+                    "name": "status",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": "'queued'"
+                },
+                "quality": {
+                    "name": "quality",
+                    "type": "jsonb",
+                    "primaryKey": false,
+                    "notNull": false
+                },
+                "error": {
+                    "name": "error",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": false
+                },
+                "created_at": {
+                    "name": "created_at",
+                    "type": "timestamp with time zone",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": "now()"
+                }
+            },
+            "indexes": {
+                "image_version_number": {
+                    "name": "image_version_number",
+                    "columns": [
+                        {
+                            "expression": "item_id",
+                            "isExpression": false,
+                            "asc": true,
+                            "nulls": "last"
+                        },
+                        {
+                            "expression": "number",
+                            "isExpression": false,
+                            "asc": true,
+                            "nulls": "last"
+                        }
+                    ],
+                    "isUnique": true,
+                    "concurrently": false,
+                    "method": "btree",
+                    "with": {}
+                }
+            },
+            "foreignKeys": {
+                "image_versions_item_id_campaign_items_id_fk": {
+                    "name": "image_versions_item_id_campaign_items_id_fk",
+                    "tableFrom": "image_versions",
+                    "tableTo": "campaign_items",
+                    "columnsFrom": ["item_id"],
+                    "columnsTo": ["id"],
+                    "onDelete": "cascade",
+                    "onUpdate": "no action"
+                },
+                "image_versions_asset_id_assets_id_fk": {
+                    "name": "image_versions_asset_id_assets_id_fk",
+                    "tableFrom": "image_versions",
+                    "tableTo": "assets",
+                    "columnsFrom": ["asset_id"],
+                    "columnsTo": ["id"],
+                    "onDelete": "no action",
+                    "onUpdate": "no action"
+                }
+            },
+            "compositePrimaryKeys": {},
+            "uniqueConstraints": {},
+            "policies": {},
+            "checkConstraints": {},
+            "isRLSEnabled": false
+        },
+        "public.jobs": {
+            "name": "jobs",
+            "schema": "",
+            "columns": {
+                "id": {
+                    "name": "id",
+                    "type": "uuid",
+                    "primaryKey": true,
+                    "notNull": true,
+                    "default": "gen_random_uuid()"
+                },
+                "brand_id": {
+                    "name": "brand_id",
+                    "type": "uuid",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "kind": {
+                    "name": "kind",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "entity_id": {
+                    "name": "entity_id",
+                    "type": "uuid",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "status": {
+                    "name": "status",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": "'queued'"
+                },
+                "stage": {
+                    "name": "stage",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": "'Waiting to start'"
+                },
+                "error": {
+                    "name": "error",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": false
+                },
+                "run_id": {
+                    "name": "run_id",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": false
+                },
+                "attempts": {
+                    "name": "attempts",
+                    "type": "integer",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": 0
+                },
+                "updated_at": {
+                    "name": "updated_at",
+                    "type": "timestamp with time zone",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": "now()"
+                },
+                "created_at": {
+                    "name": "created_at",
+                    "type": "timestamp with time zone",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": "now()"
+                }
+            },
+            "indexes": {},
+            "foreignKeys": {
+                "jobs_brand_id_brands_id_fk": {
+                    "name": "jobs_brand_id_brands_id_fk",
+                    "tableFrom": "jobs",
+                    "tableTo": "brands",
+                    "columnsFrom": ["brand_id"],
+                    "columnsTo": ["id"],
+                    "onDelete": "cascade",
+                    "onUpdate": "no action"
+                }
+            },
+            "compositePrimaryKeys": {},
+            "uniqueConstraints": {},
+            "policies": {},
+            "checkConstraints": {},
+            "isRLSEnabled": false
+        },
+        "public.products": {
+            "name": "products",
+            "schema": "",
+            "columns": {
+                "id": {
+                    "name": "id",
+                    "type": "uuid",
+                    "primaryKey": true,
+                    "notNull": true,
+                    "default": "gen_random_uuid()"
+                },
+                "brand_id": {
+                    "name": "brand_id",
+                    "type": "uuid",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "name": {
+                    "name": "name",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "description": {
+                    "name": "description",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": "''"
+                },
+                "packaging": {
+                    "name": "packaging",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": "''"
+                },
+                "created_at": {
+                    "name": "created_at",
+                    "type": "timestamp with time zone",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": "now()"
+                }
+            },
+            "indexes": {},
+            "foreignKeys": {
+                "products_brand_id_brands_id_fk": {
+                    "name": "products_brand_id_brands_id_fk",
+                    "tableFrom": "products",
+                    "tableTo": "brands",
+                    "columnsFrom": ["brand_id"],
+                    "columnsTo": ["id"],
+                    "onDelete": "cascade",
+                    "onUpdate": "no action"
+                }
+            },
+            "compositePrimaryKeys": {},
+            "uniqueConstraints": {},
+            "policies": {},
+            "checkConstraints": {},
+            "isRLSEnabled": false
+        }
+    },
+    "enums": {},
+    "schemas": {},
+    "sequences": {},
+    "roles": {},
+    "policies": {},
+    "views": {},
+    "_meta": {
+        "columns": {},
+        "schemas": {},
+        "tables": {}
+    }
+}

@@ -13,7 +13,7 @@ export const securityPlugin = fp<{ corsOrigin: string }>(async (app, { corsOrigi
     await app.register(cors, {
         // Comma-separated allowlist so previews can be added next to the production origin.
         origin: corsOrigin.split(",").map((origin) => origin.trim()),
-        methods: ["GET", "POST", "PATCH", "DELETE"],
+        methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
         // Lets the browser read the correlation id from cross-origin responses.
         exposedHeaders: ["x-request-id"],
     });

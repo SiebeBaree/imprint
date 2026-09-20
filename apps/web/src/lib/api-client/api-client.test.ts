@@ -27,7 +27,7 @@ describe("apiFetch", () => {
 
     it("sends a generated x-request-id", async () => {
         const fetchMock = stubFetch(200, []);
-        await apiFetch("/todos", z.array(z.unknown()));
+        await apiFetch("/campaigns", z.array(z.unknown()));
         const headers = new Headers(fetchMock.mock.calls[0]?.[1]?.headers);
         expect(headers.get("x-request-id")).toMatch(/^[0-9a-f-]{36}$/);
     });
@@ -38,14 +38,14 @@ describe("apiFetch", () => {
             requestId: "req-1",
             issues: [{ path: "title", message: "Add a title first." }],
         });
-        const error = await apiFetch("/todos", z.unknown(), { method: "POST" }).catch((caught: unknown) => caught);
+        const error = await apiFetch("/campaigns", z.unknown(), { method: "POST" }).catch((caught: unknown) => caught);
         expect(error).toBeInstanceOf(ApiError);
         expect(error).toMatchObject({ status: 400, message: "Invalid input.", requestId: "req-1" });
     });
 
     it("throws a generic ApiError when the error body is not the contract shape", async () => {
         stubFetch(502, undefined);
-        await expect(apiFetch("/todos", z.unknown())).rejects.toMatchObject({ message: "Request failed (502)" });
+        await expect(apiFetch("/campaigns", z.unknown())).rejects.toMatchObject({ message: "Request failed (502)" });
     });
 
     it("reports a contract-violating 200 to Sentry and rejects", async () => {
@@ -58,7 +58,7 @@ describe("apiFetch", () => {
 
     it("does not report handled error responses to Sentry", async () => {
         stubFetch(400, { message: "Invalid input.", requestId: "req-1" });
-        await expect(apiFetch("/todos", z.unknown(), { method: "POST" })).rejects.toBeInstanceOf(ApiError);
+        await expect(apiFetch("/campaigns", z.unknown(), { method: "POST" })).rejects.toBeInstanceOf(ApiError);
         expect(captureException).not.toHaveBeenCalled();
     });
 });

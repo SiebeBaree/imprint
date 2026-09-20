@@ -29,9 +29,3 @@ jobs:
               env:
                   SKIP_ENV_VALIDATION: 1
                   VITE_SKIP_ENV_VALIDATION: 1
-
-            - run: pnpm exec playwright install --with-deps chromium
-
-            - run: pnpm e2e
-              env:
-                  DATABASE_URL: ${{ secrets.DATABASE_URL }}

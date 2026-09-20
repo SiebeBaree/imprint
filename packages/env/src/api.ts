@@ -12,21 +12,21 @@ const originList = z
         "Expected a comma-separated list of origins",
     );
 
-/**
- * Api environment.
- *
- * Three tiers:
- * - DATABASE_URL: always required, the api cannot function without it.
- * - CORS_ORIGIN and Upstash: required in production, optional in dev where localhost and the no-op limiter are fine.
- *   CORS decides who may call the api and rate limiting is a security control, so a forgotten variable must fail the
- *   deploy instead of shipping an open api.
- * - SENTRY_DSN: always optional, without it errors only land in the logs.
- *
- * Axiom needs no variable here: logs go to stdout as JSON and Vercel's Axiom log drain ships them.
- */
 export const env = createEnv({
     server: {
         DATABASE_URL: z.url(),
+        CLERK_SECRET_KEY: z.string().min(1),
+        R2_ACCOUNT_ID: z.string().min(1),
+        R2_ACCESS_KEY_ID: z.string().min(1),
+        R2_SECRET_ACCESS_KEY: z.string().min(1),
+        R2_BUCKET: z.string().min(1),
+        TRIGGER_SECRET_KEY: z.string().min(1),
+        TRIGGER_PROJECT_REF: z.string().min(1),
+        OPENROUTER_API_KEY: z.string().min(1),
+        OPENAI_API_KEY: z.string().min(1),
+        GOOGLE_GENERATIVE_AI_API_KEY: z.string().min(1),
+        APIFY_TOKEN: z.string().min(1),
+        INSTAGRAM_POST_LIMIT: z.coerce.number().int().min(1).max(5000).default(1000),
         PORT: z.coerce.number().int().positive().default(3001),
         CORS_ORIGIN: isProd ? originList : originList.default("http://localhost:5173"),
         UPSTASH_REDIS_REST_URL: isProd ? z.url() : z.url().optional(),

@@ -3,6 +3,8 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import process from "node:process";
 
+import { loadEnv } from "vite";
+
 // Runs after `react-router build` (see the build script). React Router generates the SPA index.html outside Vite's
 // HTML pipeline, so no Vite CSP plugin can see it; this step hashes the inline bootstrap scripts it emits and
 // injects the policy as a meta tag. A static header cannot carry the policy instead: the hashes change per build.
@@ -26,17 +28,30 @@ const cssLiteral = sonnerSource.match(/__insertCSS\(("(?:[^"\\]|\\.)*")\)/)?.[1]
 if (!cssLiteral) throw new Error("Could not extract sonner's runtime CSS; update the extraction in inject-csp.mjs");
 const styleHashes = ["", new Function(`return ${cssLiteral}`)()].map(sha256);
 
+// This is a separate process from Vite, so load the same build environment before creating the policy.
+const env = { ...loadEnv("production", new URL("..", import.meta.url).pathname), ...process.env };
+const apiOrigin = new URL(env.VITE_API_URL || "http://localhost:3001").origin;
+const mediaOrigin = env.VITE_R2_ORIGIN ? new URL(env.VITE_R2_ORIGIN).origin : "";
+const clerkKey = env.VITE_CLERK_PUBLISHABLE_KEY;
+const clerkDomain = clerkKey
+    ? Buffer.from(clerkKey.replace(/^pk_(test|live)_/, ""), "base64")
+          .toString()
+          .replace(/\$$/, "")
+    : "";
+if (clerkDomain && !/^[a-zA-Z0-9.-]+$/.test(clerkDomain)) throw new Error("Invalid Clerk publishable key domain");
+const clerkOrigin = clerkDomain ? `https://${clerkDomain}` : "";
 const policy = [
     "default-src 'self'",
     // 'strict-dynamic' lets the hashed bootstrap scripts load our chunks and lets those chunks lazy-load PostHog
     // modules. CSP2 browsers ignore it and fall back to 'self' plus the hashes.
-    `script-src 'self' 'strict-dynamic' ${scriptHashes.join(" ")}`,
+    `script-src 'self' 'strict-dynamic' ${scriptHashes.join(" ")} ${clerkOrigin}${clerkOrigin ? " https://challenges.cloudflare.com" : ""}`,
     `style-src 'self' ${styleHashes.join(" ")}`,
-    "img-src 'self' data:",
+    `img-src 'self' data: ${apiOrigin} ${mediaOrigin}`,
     "font-src 'self'",
     // The api is cross-origin by design. The build inlines VITE_API_URL into the bundle, so the policy derives the
-    // allowed connect origin from the same variable; the fallback mirrors the dev default in @repo/env/web.
-    `connect-src 'self' ${new URL(process.env.VITE_API_URL ?? "http://localhost:3001").origin}`,
+    // allowed connect origin from the same variable; the fallback is only for CI builds that skip env validation.
+    `connect-src 'self' ${apiOrigin} ${mediaOrigin} ${clerkOrigin}`,
+    `frame-src ${clerkOrigin || "'none'"}${clerkOrigin ? " https://challenges.cloudflare.com" : ""}`,
     // PostHog session replay compresses recordings in a blob worker.
     "worker-src 'self' blob:",
     "object-src 'none'",

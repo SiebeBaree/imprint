@@ -6,6 +6,7 @@ import { env } from "@repo/env/api";
 import { createLogger } from "@repo/logger";
 
 import { buildApp } from "./app";
+import { createServices } from "./lib/services";
 
 // Built once per process and reused, so serverless invocations after a cold start skip the setup.
 let appPromise: ReturnType<typeof buildApp> | undefined;
@@ -13,6 +14,7 @@ let appPromise: ReturnType<typeof buildApp> | undefined;
 export function getApp() {
     appPromise ??= buildApp({
         db: createDb(env.DATABASE_URL),
+        services: createServices(),
         logger: createLogger({ pretty: process.env.NODE_ENV === "development" }),
         corsOrigin: env.CORS_ORIGIN,
         upstash:

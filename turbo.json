@@ -12,6 +12,10 @@
         "dev": {
             "cache": false,
             "persistent": true
+        },
+        "jobs:dev": {
+            "cache": false,
+            "persistent": true
         }
     }
 }

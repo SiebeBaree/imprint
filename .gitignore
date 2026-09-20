@@ -10,3 +10,8 @@ test-results
 playwright-report
 *.tsbuildinfo
 .vercel
+
+!.env.example
+.trigger
+
+.pnpm-store
